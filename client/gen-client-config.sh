@@ -5,6 +5,10 @@ IP="$(ip route get 1 | grep -oP 'src \K\S+')"
 cat > "$(hostname --short)-$(basename "${1}" .conf).ovpn" <<- EOF
 $(sed -e "s/<IP>/${IP}/g" "${1}")
 
+<ca>
+$(awk '/BEGIN/,/END/' ca.crt)
+</ca>
+
 <cert>
 $(awk '/BEGIN/,/END/' public.crt)
 </cert>
@@ -16,8 +20,4 @@ $(awk '/BEGIN/,/END/' private.key)
 <tls-crypt>
 $(awk '/BEGIN/,/END/' "../server/tls-crypt-$(hostname --short).key")
 </tls-crypt>
-
-<peer-fingerprint>
-$(openssl x509 -fingerprint -sha256 -in ../server/public.crt -noout | cut -d '=' -f 2)
-</peer-fingerprint>
 EOF
