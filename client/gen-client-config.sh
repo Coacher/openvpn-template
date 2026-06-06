@@ -3,7 +3,7 @@
 IP="$(ip route get 1 | grep -oP 'src \K\S+')"
 
 cat > "$(hostname --short)-$(basename "${1}" .conf).ovpn" <<- EOF
-$(sed -e "s/<IP>/${IP}/" "${1}")
+$(sed -e "s/<IP>/${IP}/g" "${1}")
 
 <cert>
 $(awk '/BEGIN/,/END/' public.crt)
